@@ -1,0 +1,77 @@
+---
+import SectionHead from './SectionHead.astro';
+import { t, type Locale } from '../i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const { achievements: a } = t(locale);
+---
+<section id="achievements" class="section">
+  <SectionHead locale={locale} kicker={a.kicker} title={a.title} sample={a.sample} accent="text-sky" />
+
+  <dl class="mt-12 grid grid-cols-3 gap-3 sm:gap-6" data-pop>
+    {
+      a.stats.map((stat, i) => (
+        <div
+          class:list={[
+            'flex flex-col-reverse border-[3px] border-ink p-3 shadow-hard sm:p-6',
+            ['bg-sun', 'bg-paper', 'bg-pop'][i % 3],
+          ]}
+          style={`rotate:${[-1.5, 1, -0.5][i % 3]}deg`}
+        >
+          <dt class="mt-1 text-sm font-semibold leading-tight sm:text-lg">{stat.label}</dt>
+          <dd class="font-display text-[clamp(2.5rem,9vw,7rem)] font-extrabold leading-none tracking-[-0.05em]">
+            <span data-count={stat.value}>{stat.value}</span>{stat.suffix}
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  <ol class="mt-14 sm:mt-20" data-rows>
+    {
+      a.items.map((item) => (
+        <li class="ledger-row group relative grid gap-x-8 gap-y-1 py-6 sm:grid-cols-[6rem_1fr] sm:py-8 lg:grid-cols-[8rem_1.4fr_1fr] lg:items-baseline">
+          <span class="ledger-row__line" data-row-line />
+          <span class="ledger-row__fill" />
+          <p class="relative font-hand text-3xl font-bold text-sky">{item.year}</p>
+          <h3 class="relative font-display text-[clamp(1.35rem,2.6vw,2.2rem)] font-bold leading-tight tracking-[-0.02em]">
+            {item.title}
+          </h3>
+          <p class="relative flex flex-wrap items-center gap-x-3 gap-y-1 text-lg text-ink-soft sm:col-start-2 lg:col-start-3">
+            {item.level && (
+              <span class="rounded-full border-[2.5px] border-ink bg-paper px-3 py-0.5 text-sm font-bold uppercase tracking-wide text-ink">
+                {item.level}
+              </span>
+            )}
+            {item.detail}
+          </p>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .ledger-row:last-child {
+    border-bottom: 3px solid var(--color-ink);
+  }
+  .ledger-row__line {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: var(--color-ink);
+    transform-origin: left center;
+  }
+  /* isian kuning saat hover, seperti distabilo */
+  .ledger-row__fill {
+    position: absolute;
+    inset: 3px -0.75rem 0;
+    background: var(--color-sun);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .ledger-row:hover .ledger-row__fill {
+    transform: scaleY(1);
+  }
+</style>

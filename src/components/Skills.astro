@@ -1,0 +1,38 @@
+---
+import SectionHead from './SectionHead.astro';
+import Doodle from './Doodle.astro';
+import { t, type Locale } from '../i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const { skills } = t(locale);
+const groupStyles = ['bg-sky text-white', 'bg-pop'];
+---
+<section id="skills" class="section relative">
+  <Doodle name="star" class="absolute right-[8%] top-24 h-14 w-14 text-sun sm:h-20 sm:w-20" stroke={5} data-draw data-float="-70" />
+  <SectionHead locale={locale} kicker={skills.kicker} title={skills.title} sample={skills.sample} accent="text-sun" />
+  <div class="mt-12 grid gap-8 md:grid-cols-2 lg:mt-16">
+    {
+      skills.groups.map((group, g) => (
+        <div
+          class:list={['border-[3px] border-ink p-6 shadow-hard sm:p-10', groupStyles[g % groupStyles.length]]}
+          style={`rotate:${g % 2 ? 1 : -1}deg`}
+          data-rise
+        >
+          <h3 class="font-display text-4xl font-extrabold leading-none tracking-[-0.03em] sm:text-5xl">{group.title}</h3>
+          <ul class="mt-6 flex flex-wrap gap-3" data-pop>
+            {group.items.map((item, i) => (
+              <li
+                class="rounded-full border-[2.5px] border-ink bg-paper px-4 py-2 text-lg font-semibold text-ink transition-[rotate,background-color] duration-200 hover:bg-sun"
+                style={`rotate:${[-2, 1.5, -1, 2.5, -1.5, 1][i % 6]}deg`}
+              >{item}</li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+  <p class="mt-8 flex items-end justify-end gap-2 font-hand text-2xl font-semibold text-ink-soft sm:text-3xl">
+    <Doodle name="arrow" class="h-10 w-12 -scale-x-100 rotate-180" stroke={4} data-draw />
+    <span class="-rotate-2">{skills.note}</span>
+  </p>
+</section>

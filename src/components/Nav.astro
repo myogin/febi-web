@@ -1,0 +1,145 @@
+---
+import { homePath, locales, site, t, type Locale } from '../i18n';
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const dict = t(locale);
+---
+<header class="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-4 py-3 sm:px-8 sm:py-5" data-nav>
+  <a
+    href={homePath(locale)}
+    aria-label={`${site.initials} — ${dict.a11y.home}`}
+    data-magnetic
+    class="grid size-12 place-items-center rounded-2xl border-[3px] border-ink bg-pop font-display text-lg font-extrabold text-ink shadow-hard-sm -rotate-6"
+  >{site.initials}</a>
+
+  <div class="flex items-center gap-2 sm:gap-3">
+    <nav aria-label={dict.a11y.language}>
+      <ul class="flex items-center gap-1 rounded-full border-[3px] border-ink bg-paper p-1 text-ink shadow-hard-sm">
+        {
+          locales.map((l) => (
+            <li>
+              <a
+                href={homePath(l)}
+                hreflang={l}
+                lang={l}
+                aria-current={l === locale ? 'page' : undefined}
+                class:list={[
+                  'grid h-10 min-w-11 place-items-center rounded-full px-3 font-display text-sm font-bold uppercase transition-colors duration-200',
+                  l === locale ? 'bg-ink text-paper' : 'hover:bg-sun',
+                ]}
+              >{l}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- Menu memakai Popover API bawaan browser: buka/tutup & tombol Esc jalan tanpa JS -->
+    <button
+      type="button"
+      popovertarget="menu"
+      aria-label={dict.nav.menu}
+      data-magnetic
+      class="grid size-12 place-items-center rounded-full border-[3px] border-ink bg-sun text-ink shadow-hard-sm"
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M3 8c5-2 12 2 18 0M3 16c6 2 12-2 18 0" /></svg>
+    </button>
+  </div>
+</header>
+
+<div id="menu" popover class="menu" data-menu>
+  <button
+    type="button"
+    popovertarget="menu"
+    popovertargetaction="hide"
+    aria-label={dict.nav.close}
+    class="menu__close grid size-12 place-items-center rounded-full border-[3px] border-ink bg-ink text-paper"
+  >
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" /></svg>
+  </button>
+  <nav aria-label="Menu">
+    <ul class="menu__list">
+      {
+        dict.nav.links.map((link, i) => (
+          <li>
+            <a href={`#${link.id}`} data-menu-link>
+              <span class="menu__num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="menu__label">{link.label}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</div>
+
+<style>
+  .menu {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    border: 0;
+    padding: 5.5rem 1.25rem 2rem;
+    overflow-y: auto;
+    background: var(--color-sun);
+    color: var(--color-ink);
+    background-image: radial-gradient(color-mix(in srgb, var(--color-ink) 22%, transparent) 1px, transparent 1.2px);
+    background-size: 26px 26px;
+  }
+  .menu:popover-open {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .menu__close {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+  }
+  .menu__list {
+    display: grid;
+    gap: 0.25rem;
+    width: 100%;
+    max-width: 70rem;
+    margin-inline: auto;
+  }
+  .menu__list a {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 0.35rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(2.3rem, 8.5vh, 5.5rem);
+    line-height: 1;
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+  }
+  .menu__num {
+    font-family: var(--font-hand);
+    font-weight: 600;
+    font-size: 0.4em;
+    letter-spacing: 0;
+    color: var(--color-sky);
+  }
+  .menu__label {
+    transition: translate 0.25s ease, color 0.25s ease;
+  }
+  .menu__list a:hover .menu__label,
+  .menu__list a:focus-visible .menu__label {
+    translate: 0.3em 0;
+    color: var(--color-pop);
+    -webkit-text-stroke: 2px var(--color-ink);
+    paint-order: stroke fill;
+  }
+  @media (min-width: 48rem) {
+    .menu { padding-inline: 2.5rem; }
+    .menu__close { top: 1.25rem; right: 2rem; }
+  }
+</style>

@@ -1,0 +1,36 @@
+---
+import SectionHead from './SectionHead.astro';
+import Doodle from './Doodle.astro';
+import { t, type Locale } from '../i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const { about } = t(locale);
+const noteStyles = [
+  { bg: 'bg-sun', rot: -3 },
+  { bg: 'bg-pop', rot: 2 },
+  { bg: 'bg-leaf', rot: -1.5 },
+];
+---
+<section id="about" class="section relative">
+  <Doodle name="spark" class="absolute right-[6%] top-16 h-16 w-16 text-sky sm:h-24 sm:w-24" stroke={5} data-draw data-float="-90" />
+  <SectionHead locale={locale} kicker={about.kicker} title={about.title} sample={about.sample} />
+  <div class="mt-12 grid gap-12 lg:mt-16 lg:grid-cols-[1.5fr_1fr] lg:gap-20">
+    <p
+      class="font-display text-[clamp(1.5rem,3.1vw,2.75rem)] font-semibold leading-[1.2] tracking-[-0.02em]"
+      data-words
+    >{about.body}</p>
+    <ul class="grid content-start gap-6 sm:grid-cols-3 lg:grid-cols-1" data-pop>
+      {
+        about.notes.map((note, i) => (
+          <li
+            class:list={['border-[3px] border-ink p-5 shadow-hard', noteStyles[i % noteStyles.length].bg]}
+            style={`rotate:${noteStyles[i % noteStyles.length].rot}deg`}
+          >
+            <p class="font-hand text-2xl font-semibold leading-none">{note.label}</p>
+            <p class="mt-2 font-display text-xl font-bold leading-tight">{note.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

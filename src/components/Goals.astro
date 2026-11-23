@@ -1,0 +1,65 @@
+---
+import SectionHead from './SectionHead.astro';
+import Doodle from './Doodle.astro';
+import { t, type Locale } from '../i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const { goals } = t(locale);
+---
+<section id="goals" class="section relative">
+  <SectionHead locale={locale} kicker={goals.kicker} title={goals.title} sample={goals.sample} accent="text-leaf" />
+  <div class="mt-12 grid gap-12 lg:mt-16 lg:grid-cols-[1.4fr_1fr] lg:gap-20">
+    <blockquote class="relative">
+      <Doodle name="spark" class="absolute -top-12 right-0 h-12 w-12 text-pop sm:h-16 sm:w-16" stroke={5} data-draw data-float="-50" />
+      <p
+        class="relative font-display text-[clamp(2rem,5vw,4.5rem)] font-extrabold leading-[1.05] tracking-[-0.035em]"
+        data-words
+      >{goals.statement}</p>
+    </blockquote>
+
+    <div class="plan -rotate-1 border-[3px] border-ink p-6 shadow-hard sm:p-8" data-rise>
+      <h3 class="font-hand text-4xl font-bold leading-none text-sky">{goals.listTitle}</h3>
+      <ul class="mt-4" data-checklist>
+        {
+          goals.items.map((item) => (
+            <li class="flex items-center gap-4 py-3">
+              <svg class="size-8 shrink-0 overflow-visible" viewBox="0 0 32 32" aria-hidden="true">
+                <rect x="3" y="3" width="26" height="26" rx="5" fill="var(--color-paper)" stroke="currentColor" stroke-width="3" />
+                {item.done && (
+                  <path
+                    class="plan__check"
+                    data-check
+                    d="M8 17 L 14 24 L 30 2"
+                    pathLength="1"
+                    fill="none"
+                    stroke="var(--color-pop)"
+                    stroke-width="5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                )}
+              </svg>
+              <span class="font-display text-xl font-bold leading-tight sm:text-2xl">{item.text}</span>
+              <span class="ml-auto shrink-0 font-hand text-xl font-semibold text-ink-soft">
+                {item.done ? goals.doneLabel : goals.nextLabel}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* kertas bergaris */
+  .plan {
+    background:
+      repeating-linear-gradient(transparent 0 3.4rem, color-mix(in srgb, var(--color-sky) 30%, transparent) 3.4rem calc(3.4rem + 2px)),
+      var(--color-paper);
+  }
+  .plan__check {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+</style>

@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+/* ───────── Design tokens — ganti warna/font cukup di sini ───────── */
+@theme {
+  --color-paper: #fff6e3;
+  --color-paper-deep: #f5e7c8;
+  --color-ink: #1a1814;
+  --color-ink-soft: #5a5348;
+  --color-pop: #ff4f7b; /* aksen utama */
+  --color-sun: #ffc83d;
+  --color-sky: #3d5afe;
+  --color-leaf: #19c38b;
+
+  --font-display: "Bricolage Grotesque Variable", system-ui, sans-serif;
+  --font-hand: "Caveat Variable", "Comic Sans MS", cursive;
+  --font-body: "DM Sans Variable", system-ui, sans-serif;
+
+  --shadow-hard: 6px 6px 0 0 var(--color-ink);
+  --shadow-hard-sm: 3px 3px 0 0 var(--color-ink);
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-size-adjust: 100%;
+  }
+  body {
+    min-height: 100dvh;
+    overflow-x: clip;
+    /* kertas dot-grid ala sketchbook */
+    background-image: radial-gradient(color-mix(in srgb, var(--color-ink) 16%, transparent) 1px, transparent 1.2px);
+    background-size: 26px 26px;
+  }
+  ::selection {
+    background: var(--color-pop);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-sky);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  a, button { cursor: pointer; }
+}
+
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: clip; }
+
+/* Coretan SVG: tampil penuh tanpa JS; GSAP yang "menggambar"-nya */
+.doodle path {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+/* Tombol neubrutal */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 3rem;
+  padding: 0.7rem 1.4rem;
+  border: 3px solid var(--color-ink);
+  border-radius: 999px;
+  background: var(--color-pop);
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  box-shadow: var(--shadow-hard-sm);
+  transition: box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.btn:hover { box-shadow: var(--shadow-hard); background: var(--color-sun); }
+.btn:active { box-shadow: 0 0 0 0 var(--color-ink); }
+
+/* Lebar & jarak section standar */
+.section-x {
+  width: 100%;
+  max-width: 110rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+.section {
+  width: 100%;
+  max-width: 110rem;
+  margin-inline: auto;
+  padding: 6rem 1rem;
+  scroll-margin-top: 1rem;
+}
+@media (min-width: 48rem) {
+  .section-x { padding-inline: 2.5rem; }
+  .section { padding: 9rem 2.5rem; }
+}
+
+.btn--lg { min-height: 3.75rem; padding: 0.9rem 2rem; font-size: 1.3rem; box-shadow: 4px 4px 0 0 var(--color-paper); }
+.btn--lg:hover { box-shadow: 7px 7px 0 0 var(--color-paper); }
+.btn--alt { background: var(--color-sun); }
+.btn--alt:hover { background: var(--color-leaf); }
+
+/* Garis progres baca di tepi atas (hanya dengan JS) */
+.progress {
+  display: none;
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: 5px;
+  background: var(--color-pop);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+html.js .progress { display: block; }
+
+/* Kursor pengikut (hanya pointer halus + JS) */
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 90;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border-radius: 50%;
+  background: var(--color-pop);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro, .cursor, .progress { display: none !important; }
+}

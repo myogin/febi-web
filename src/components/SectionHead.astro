@@ -1,0 +1,30 @@
+---
+import Doodle from './Doodle.astro';
+import { t, type Locale } from '../i18n';
+interface Props {
+  locale: Locale;
+  kicker: string;
+  title: string;
+  sample?: boolean;
+  /** warna garis coretan di bawah judul */
+  accent?: string;
+}
+const { locale, kicker, title, sample = false, accent = 'text-pop' } = Astro.props;
+---
+<header data-head>
+  <p class="flex flex-wrap items-center gap-3 font-hand text-2xl font-semibold sm:text-3xl" data-head-kicker>
+    <span class="-rotate-2">{kicker}</span>
+    {
+      sample && (
+        <span class="rotate-1 rounded-full border-2 border-dashed border-current px-3 py-0.5 text-lg opacity-80">
+          {t(locale).sampleBadge}
+        </span>
+      )
+    }
+  </p>
+  <h2
+    class="mt-2 font-display text-[clamp(2.6rem,8.5vw,7.5rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.045em]"
+    data-head-title
+  >{title}</h2>
+  <Doodle name="underline" class:list={['mt-3 h-4 w-40 sm:w-64', accent]} stroke={5} />
+</header>

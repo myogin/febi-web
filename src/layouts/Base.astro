@@ -1,0 +1,69 @@
+---
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/caveat';
+import '@fontsource-variable/dm-sans';
+import '../styles/global.css';
+import { homePath, locales, site, t, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const dict = t(locale);
+const abs = (path: string) => new URL(path, Astro.site).href;
+const ogLocale = { en: 'en_US', id: 'id_ID' } as const;
+// Data terstruktur supaya mesin pencari mengenali halaman ini sebagai profil seseorang.
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  url: abs(homePath(locale)),
+  image: abs('/og.png'),
+  description: dict.meta.description,
+  sameAs: [site.instagram].filter(Boolean),
+};
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{dict.meta.title}</title>
+    <meta name="description" content={dict.meta.description} />
+    <link rel="canonical" href={abs(homePath(locale))} />
+    {locales.map((l) => <link rel="alternate" hreflang={l} href={abs(homePath(l))} />)}
+    <link rel="alternate" hreflang="x-default" href={abs(homePath('en'))} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Tampilan saat link dibagikan (WhatsApp, Instagram, dll.) -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={dict.meta.title} />
+    <meta property="og:description" content={dict.meta.description} />
+    <meta property="og:url" content={abs(homePath(locale))} />
+    <meta property="og:image" content={abs('/og.png')} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={dict.meta.title} />
+    <meta property="og:locale" content={ogLocale[locale]} />
+    {locales.filter((l) => l !== locale).map((l) => <meta property="og:locale:alternate" content={ogLocale[l]} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+
+    <meta name="theme-color" content="#fff6e3" />
+    <!-- Tandai JS aktif sedini mungkin supaya layar intro hanya muncul bila animasi bisa jalan -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-paper"
+    >{dict.a11y.skip}</a>
+    <slot />
+    <div class="progress" aria-hidden="true" data-progress></div>
+    <div class="cursor" aria-hidden="true"></div>
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>
